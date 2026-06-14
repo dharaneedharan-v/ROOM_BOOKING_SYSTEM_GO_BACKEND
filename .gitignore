@@ -1,0 +1,66 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.out
+
+# Go build
+/bin/
+/build/
+/dist/
+
+# Go test
+# *.test
+# *.prof
+coverage.out
+
+# Dependency directories (if used)
+# vendor/
+
+# Logs
+# logs/
+# *.log
+
+# Environment files
+# .env
+# .env.*
+# !.env.example
+
+# IDE - VS Code
+# .vscode/
+
+# IDE - JetBrains
+# .idea/
+# *.iml
+
+# Visual Studio
+# .vs/
+
+# OS files
+# .DS_Store
+# Thumbs.db
+
+# Temporary files
+# tmp/
+# temp/
+
+# Generated Swagger/OpenAPI files (optional)
+# docs/swagger.json
+# docs/swagger.yaml
+
+# Database files (if using local sqlite)
+# *.db
+# *.sqlite
+# *.sqlite3
+
+# Air hot reload
+# .air/
+
+# Delve debugger
+# __debug_bin
+
+# Go workspace
+# go.work
+# go.work.sum
