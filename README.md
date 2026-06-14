@@ -173,3 +173,8 @@ http://localhost:8080
 │   └─── README.md
 └─── .gitignore
 ```
+
+### SAMPLES : 
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/1dd6831a-610a-44b3-aae0-e2d1fa3a2f2a" />
+
