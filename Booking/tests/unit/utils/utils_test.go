@@ -1,10 +1,8 @@
-
 package utils_test
-
 import (
-	"lynxis-gate/training-service/internal/dtos"
-	errorcodes "lynxis-gate/training-service/internal/errorcodes"
-	"lynxis-gate/training-service/internal/utils"
+	"BookingSystem/Booking/internal/dtos"
+	errorcodes "BookingSystem/Booking/internal/errorcodes"
+	"BookingSystem/Booking/internal/utils"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -324,3 +322,5 @@ func TestMapErrorCode(t *testing.T) {
 		assert.Equal(t, expectedStatus, result.Code)
 	})
 }
+
+

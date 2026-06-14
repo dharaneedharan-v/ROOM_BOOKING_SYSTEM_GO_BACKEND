@@ -1,5 +1,3 @@
-
-
 package database_test
 
 import (
@@ -7,29 +5,29 @@ import (
 	"os"
 	"testing"
 
-	"lynxis-gate/training-service/pkg/database"
+	"BookingSystem/Booking/pkg/database"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewConnection(t *testing.T) {
 	// Set up environment variables for the SQL server connection
-	os.Setenv("DB_USERNAME", "username")
-	os.Setenv("DB_PASSWORD", "password")
+	os.Setenv("DB_USERNAME", "postgres")
+	os.Setenv("DB_PASSWORD", "2023")
 	os.Setenv("DB_HOST", "localhost")
-	os.Setenv("DB_PORT", "1433")
-	os.Setenv("DB_NAME", "testdb")
+	os.Setenv("DB_PORT", "5432")
+	os.Setenv("DB_NAME", "booking_go_task_3")
 
 	// Generate a SQL Server DSN from the environment variables
-	dsn := "sqlserver://" +
+	dsn := "postgres://" +
 		os.Getenv("DB_USERNAME") + ":" + os.Getenv("DB_PASSWORD") +
 		"@" + os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT") +
-		"?database=" + os.Getenv("DB_NAME")
+		"/" + os.Getenv("DB_NAME") + "?sslmode=disable"
 
-	iul := "sqlserver:/" +
+	iul := "postgres://" +
 		os.Getenv("DB_USERNAME") + ":" + os.Getenv("DB_PASSWORD") +
 		"@" + os.Getenv("HOST") + ":" + os.Getenv("DB_PORT") +
-		"?database="
+		"/"
 
 	tests := []struct {
 		name    string

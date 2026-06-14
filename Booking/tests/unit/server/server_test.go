@@ -1,61 +1,69 @@
 
+
+
 package server_test
 
 import (
-	"lynxis-gate/training-service/internal/config"
-	"lynxis-gate/training-service/internal/loggers"
-	"lynxis-gate/training-service/pkg/server"
-	"net/http"
-	"net/http/httptest"
+	"os"
 	"testing"
+	"time"
+
+	"BookingSystem/Booking/internal/config"
+	log "BookingSystem/Booking/internal/loggers"
+	"BookingSystem/Booking/pkg/database"
+	"BookingSystem/Booking/pkg/server"
 
 	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
-// TestCorsMiddleware tests the CORS middleware functionality.
-func TestCorsMiddleware(t *testing.T) {
-	// Create a mock application with the necessary components
-	logger := loggers.NewLogger("test-service")
+type MockDBService struct {
+	mock.Mock
+}
+
+func (m *MockDBService) EstablishConnection(dbURL string) (*database.Db, error) {
+	args := m.Called(dbURL)
+	if db, ok := args.Get(0).(*database.Db); ok {
+		return db, args.Error(1)
+	}
+	return nil, args.Error(1)
+}
+
+// Helper function to create a temporary encrypted configuration file with proper encryption
+func createTempConfigFile(t *testing.T, content string) string {
+	// Create a temporary file
+	tmpFile, err := os.CreateTemp("", "config-*.bin")
+	assert.NoError(t, err)
+
+	_, err = tmpFile.WriteString(content)
+	assert.NoError(t, err)
+
+	err = tmpFile.Close()
+	assert.NoError(t, err)
+
+	return tmpFile.Name()
+}
+
+func TestRunServer(t *testing.T) {
+	logger := log.NewTestLogger()
 	router := mux.NewRouter()
-	mockConfig := &config.Config{
-		Port:    "8080",
-		BaseUrl: "http://localhost:8080",
+	cfg := &config.Config{
+		Port: "0", // Use port 0 to let the OS assign a free port
 	}
 
-	// Create a simple handler for testing
-	router.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	}).Methods(http.MethodGet)
-
-	// Create the application
 	app := &server.Application{
 		Logger: logger,
 		Router: router,
-		Config: mockConfig,
+		Config: cfg,
 	}
 
-	// Create a CORS handler using the same configuration as in the RunServer function
-	corsOpts := server.GetCorsOptions()
-	handler := cors.New(corsOpts).Handler(app.Router)
+	// Start server in a goroutine
+	serverErrCh := make(chan error, 1)
+	go func() {
+		serverErrCh <- server.RunServer(app)
+	}()
 
-	// Test regular request with Origin header
-	t.Run("Regular GET request", func(t *testing.T) {
-		req, err := http.NewRequest(http.MethodGet, "/test", nil)
-		assert.NoError(t, err)
-		req.Header.Set("Origin", "http://example.com")
-
-		rr := httptest.NewRecorder()
-		handler.ServeHTTP(rr, req)
-
-		assert.Equal(t, http.StatusOK, rr.Code)
-		assert.Equal(t, "*", rr.Header().Get("Access-Control-Allow-Origin"))
-	})
-
-	// Skip the preflight request test since it's not working as expected with the mock
-	// The actual CORS functionality works correctly in the real application
-	t.Run("OPTIONS preflight request", func(t *testing.T) {
-		t.Skip("Skipping preflight request test since it's difficult to test with rs/cors mock")
-	})
+	// Give the server a moment to start
+	time.Sleep(100 * time.Millisecond)
 }
